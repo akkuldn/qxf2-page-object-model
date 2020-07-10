@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 # Chrome browser to run the tests
 ARG CHROME_VERSION=latest
-RUN if [ ${CHROME_VERSION} = "latest" ]; then curl https://dl-ssl.google.com/linux/linux_signing_key.pub -o /tmp/google.pub && cat /tmp/google.pub | apt-key add -; rm /tmp/google.pub  && echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google.list  && mkdir -p /usr/share/desktop-directories  && apt-get -y update && apt-get install -y google-chrome-stable; else curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add && curl https://www.slimjet.com/chrome/download-chrome.php?file=lnx%2Fchrome64_$CHROME_VERSION.deb && dpkg -i download-chrome*.deb || true && apt-get install -y -f && rm -rf /var/lib/apt/lists/*;fi
+RUN if [ ${CHROME_VERSION} = "latest" ]; then wget -qO /tmp/google.pub https://dl-ssl.google.com/linux/linux_signing_key.pub && cat /tmp/google.pub | apt-key add -; rm /tmp/google.pub  && echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google.list  && mkdir -p /usr/share/desktop-directories  && apt-get -y update && apt-get install -y google-chrome-stable; else wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add && curl https://www.slimjet.com/chrome/download-chrome.php?file=lnx%2Fchrome64_$CHROME_VERSION.deb && dpkg -i download-chrome*.deb || true && apt-get install -y -f && rm -rf /var/lib/apt/lists/*;fi
 
 # Disable the SUID sandbox so that chrome can launch without being in a privileged container
 RUN dpkg-divert --add --rename --divert /opt/google/chrome/google-chrome.real /opt/google/chrome/google-chrome \
